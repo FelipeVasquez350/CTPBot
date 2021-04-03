@@ -82,8 +82,8 @@ client.once('ready', () => {
     }
     //jajaja old same old same
     setTimeout(unzip, 1000);
-    setTimeout(ThroughDirectory, 3000, "./CalamityTexturePack");
-    setTimeout(RunPythonScript, 20000);
+    setTimeout(ThroughDirectory, 1500, "./CalamityTexturePack");
+    setTimeout(RunPythonScript, 5000);
 });
 
 // Read messages.
