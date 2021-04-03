@@ -48,22 +48,11 @@ client.once('ready', () => {
     });
 
     //unzipping the CalamityTexturePack.zip into the CalamityTexturePack folder    
-    function unzip(){
-        fs.createReadStream('./CalamityTexturePack.zip')
-            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
-        throughDirectory("./CalamityTexturePack");
-        }
+    
 
     
     //reading and writing every file path into Files    
-    function ThroughDirectory(Directory) {
-        fs.readdirSync(Directory).forEach(File => {
-            const Absolute = Path.join(Directory, File);
-            if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
-            else return Files.push(Absolute);
-        });
-        RunPythonScript();
-    }
+    
 
     function RunPythonScript()
     {
@@ -84,6 +73,21 @@ client.once('ready', () => {
             client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
     }
+
+    function ThroughDirectory(Directory) {
+        fs.readdirSync(Directory).forEach(File => {
+            const Absolute = Path.join(Directory, File);
+            if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
+            else return Files.push(Absolute);
+        });
+        RunPythonScript();
+    }
+
+    function unzip(){
+        fs.createReadStream('./CalamityTexturePack.zip')
+            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
+        throughDirectory("./CalamityTexturePack");
+        }
     //jajaja old same old same
     setTimeout(unzip, 1000);
 
