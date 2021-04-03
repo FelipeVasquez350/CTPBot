@@ -50,7 +50,10 @@ client.once('ready', () => {
     //unzipping the CalamityTexturePack.zip into the CalamityTexturePack folder    
     function unzip(){
         fs.createReadStream('./CalamityTexturePack.zip')
-            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));}
+            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
+        throughDirectory("./CalamityTexturePack");
+        }
+
     
     //reading and writing every file path into Files    
     function ThroughDirectory(Directory) {
@@ -59,6 +62,7 @@ client.once('ready', () => {
             if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
             else return Files.push(Absolute);
         });
+        RunPythonScript();
     }
 
     function RunPythonScript()
@@ -69,7 +73,7 @@ client.once('ready', () => {
             console.log(message);
           })
           
-          pyshell.end(function (err) {
+        pyshell.end(function (err) {
             if (err){
               throw err;
             };
@@ -82,8 +86,7 @@ client.once('ready', () => {
     }
     //jajaja old same old same
     setTimeout(unzip, 1000);
-    setTimeout(ThroughDirectory, 1500, "./CalamityTexturePack");
-    setTimeout(RunPythonScript, 5000);
+
 });
 
 // Read messages.
