@@ -48,11 +48,19 @@ client.once('ready', () => {
     });
 
     //unzipping the CalamityTexturePack.zip into the CalamityTexturePack folder    
-    
-
+    function unzip(){
+        fs.createReadStream('./CalamityTexturePack.zip')
+            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
+        }
     
     //reading and writing every file path into Files    
-    
+    function ThroughDirectory(Directory) {
+        fs.readdirSync(Directory).forEach(File => {
+            const Absolute = Path.join(Directory, File);
+            if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
+            else return Files.push(Absolute);
+        });
+    }
 
     function RunPythonScript()
     {
@@ -62,7 +70,7 @@ client.once('ready', () => {
             console.log(message);
           })
           
-        pyshell.end(function (err) {
+          pyshell.end(function (err) {
             if (err){
               throw err;
             };
@@ -73,24 +81,13 @@ client.once('ready', () => {
             client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
     }
-
-    function ThroughDirectory(Directory) {
-        fs.readdirSync(Directory).forEach(File => {
-            const Absolute = Path.join(Directory, File);
-            if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
-            else return Files.push(Absolute);
-        });
-        RunPythonScript();
-    }
-
-    function unzip(){
-        fs.createReadStream('./CalamityTexturePack.zip')
-            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
-        throughDirectory("./CalamityTexturePack");
-        }
+    let promise = new Promise((resolve,reject)=>{
+        (ThroughDirectory("./CalamityTexturePack"))});
     //jajaja old same old same
     setTimeout(unzip, 1000);
-
+    // ThroughDirectory("./CalamityTexturePack");
+    promise.then(setTimeout(RunPythonScript, 2000));
+    
 });
 
 // Read messages.
@@ -326,8 +323,7 @@ client.on('message', message => {
         let hours = Math.floor(client.uptime / 3600000) % 24;
         let minutes = Math.floor(client.uptime / 60000) % 60;
         let seconds = Math.floor(client.uptime / 1000) % 60;
-        message.channel.send(fs.readdirSync('.'));
-        message.channel.send("List.json", {files: ["List.json"]});
+
         const embed = new Discord.MessageEmbed()
         .setTitle("Uptime")
         .setDescription("```" + `Uptime:\n${days}d ${hours}h ${minutes}m ${seconds}s` + "```")
