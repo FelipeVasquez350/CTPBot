@@ -87,7 +87,7 @@ client.once('ready', () => {
     let promise = new Promise((resolve,reject)=>{( 
         setTimeout(ThroughDirectory, 2000, "./CalamityTexturePack"))});
 
-    promise.then(setTimeout(RunPythonScript, 6000));   
+    promise.then(setTimeout(RunPythonScript, 8000));   
 });
 
 // Read messages.
