@@ -80,23 +80,14 @@ client.once('ready', () => {
             console.log('Ctp Bot running.\nContact Daim if help is needed.\n Current list length: ' + `${spriteList.length}`);
             client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
-    }
+        }
     let promise = new Promise((resolve,reject)=>{
         (ThroughDirectory("./CalamityTexturePack"))});
     //jajaja old same old same
     setTimeout(unzip, 1000);
     // ThroughDirectory("./CalamityTexturePack");
     promise.then(setTimeout(RunPythonScript, 2000));
-    
-    let promise = new Promise((resolve,reject)=>{ 
-        setTimeout(unzip, 1000)});
-        
-    let promise2;
-
-    promise.then(promise2= new Promise((resolve,reject)=>{
-        setTimeout(ThroughDirectory, 5000, "./CalamityTexturePack")}));
-
-    promise2.then(setTimeout(RunPythonScript, 8000));   
+    promise.then(setTimeout(RunPythonScript, 5000));
 });
 
 // Read messages.
