@@ -88,7 +88,7 @@ client.once('ready', () => {
     let promise2;
 
     promise.then(promise2= new Promise((resolve,reject)=>{
-        setTimeout(ThroughDirectory, 5000, "./CalamityTexturePack")}));
+        setTimeout(ThroughDirectory, 15000, "./CalamityTexturePack")}));
 
     promise2.then(setTimeout(RunPythonScript, 8000));   
 });
