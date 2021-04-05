@@ -86,7 +86,7 @@ client.once('ready', () => {
     //jajaja old same old same
     setTimeout(unzip, 1000);
     // ThroughDirectory("./CalamityTexturePack");
-    promise.then(setTimeout(RunPythonScript, 2000));
+    promise.then(setTimeout(RunPythonScript, 1500));
 });
 
 // Read messages.
