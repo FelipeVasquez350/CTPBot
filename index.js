@@ -82,12 +82,15 @@ client.once('ready', () => {
           });
         }
     
-    setTimeout(unzip, 1000);
-    
-    let promise = new Promise((resolve,reject)=>{( 
-        setTimeout(ThroughDirectory, 500, "./CalamityTexturePack"))});
+    let promise = new Promise((resolve,reject)=>{ 
+        setTimeout(unzip, 1000)});
+        
+    let promise2;
 
-    promise.then(setTimeout(RunPythonScript, 8000));   
+    promise.then(promise2= new Promise((resolve,reject)=>{
+        setTimeout(ThroughDirectory, 5000, "./CalamityTexturePack")}));
+
+    promise2.then(setTimeout(RunPythonScript, 8000));   
 });
 
 // Read messages.
