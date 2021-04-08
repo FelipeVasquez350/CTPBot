@@ -50,16 +50,18 @@ client.once('ready', () => {
     //unzipping the CalamityTexturePack.zip into the CalamityTexturePack folder    
     function unzip(){
         fs.createReadStream('./CalamityTexturePack.zip')
-            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));
-        }
+            .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));}
     
     //reading and writing every file path into Files    
     function ThroughDirectory(Directory) {
+        console.log('started');
         fs.readdirSync(Directory).forEach(File => {
             const Absolute = Path.join(Directory, File);
             if (fs.statSync(Absolute).isDirectory()) return ThroughDirectory(Absolute);
             else return Files.push(Absolute);
         });
+        console.log('finished');
+
     }
 
     function RunPythonScript()
@@ -80,13 +82,11 @@ client.once('ready', () => {
             console.log('Ctp Bot running.\nContact Daim if help is needed.\n Current list length: ' + `${spriteList.length}`);
             client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
-        }
-    let promise = new Promise((resolve,reject)=>{
-        (ThroughDirectory("./CalamityTexturePack"))});
+    }
     //jajaja old same old same
     setTimeout(unzip, 1000);
-    // ThroughDirectory("./CalamityTexturePack");
-    promise.then(setTimeout(RunPythonScript, 5000));
+    setTimeout(ThroughDirectory, 8000, "./CalamityTexturePack");
+    setTimeout(RunPythonScript, 8000);
 });
 
 // Read messages.
