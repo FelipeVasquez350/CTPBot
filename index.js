@@ -49,7 +49,7 @@ client.once('ready', () => {
 
     //unzipping the CalamityTexturePack.zip into the CalamityTexturePack folder    
     function unzip(){
-        fs.createReadStream('./CalamityTexturePack.zip')
+        fs.createReadStream('CalamityTexturePack.zip')
             .pipe(unzipper.Extract({ path: './CalamityTexturePack' }));}
     
     //reading and writing every file path into Files    
