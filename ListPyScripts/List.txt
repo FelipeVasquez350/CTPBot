@@ -255,6 +255,11 @@
         "FileName": "Buff_33",
         "Type": "Buff",
         "Sprited": false
+      },
+      { 
+        "FileName": "NPC_666",
+        "Type": "NPC",
+        "Sprited": false
       }, 
       { 
         "FileName": "NPC_Head_Boss_2",
@@ -286,6 +291,11 @@
         "BuffName": "Weak",
         "FileName": "Buff_33",
         "Type": "Buff",
+        "Sprited": false
+      },
+      { 
+        "FileName": "NPC_666",
+        "Type": "NPC",
         "Sprited": false
       } 
     ] 
@@ -2724,7 +2734,12 @@
         "FileName": "NPC_112",
         "Type": "NPC",
         "Sprited": false
-      } 
+      },
+      { 
+        "FileName": "NPC_666",
+        "Type": "NPC",
+        "Sprited": false
+      }
     ] 
   }, 
   { 
@@ -18309,6 +18324,28 @@
     [ 
       { 
         "FileName": "NPC_664",
+        "Type": "NPC",
+        "Sprited": false
+      } 
+    ] 
+  }, 
+  { 
+    "Name": "VileSpitEaterOfWorlds",
+    "Sprites": 
+    [ 
+      { 
+        "FileName": "NPC_666",
+        "Type": "NPC",
+        "Sprited": false
+      } 
+    ] 
+  }, 
+  { 
+    "Name": "GoldenSlime",
+    "Sprites": 
+    [ 
+      { 
+        "FileName": "NPC_667",
         "Type": "NPC",
         "Sprited": false
       } 
