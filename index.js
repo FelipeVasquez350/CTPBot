@@ -13,7 +13,9 @@ const thingy = " | ";
 var difflib = require('difflib');
 var unzipper = require('unzipper');
 const { time, Console } = require('console');
-var Files  = [];
+var Files = [];
+var VanillaFiles = [];
+
 
 //const spawn = require("child_process").spawn;
 const {PythonShell} = require('python-shell');
@@ -61,9 +63,16 @@ client.once('ready', () => {
             else return Files.push(Absolute);
         });
         console.log('finished');
-
     }
-
+    function ThroughDirectoryVanilla(Directory) {
+        console.log('started');
+        fs.readdirSync(Directory).forEach(File => {
+            const Absolute = Path.join(Directory, File);
+            if (fs.statSync(Absolute).isDirectory()) return ThroughDirectoryVanilla(Absolute);
+            else return VanillaFiles.push(Absolute);
+        });
+        console.log('finished');
+    }
     function RunPythonScript()
     {
         console.log("Start python script")
@@ -79,6 +88,7 @@ client.once('ready', () => {
             console.log('finished');
             spriteList  = require(fileName);
             console.log(Files)
+            console.log(VanillaFiles);
             console.log('Ctp Bot running.\nContact Daim if help is needed.\n Current list length: ' + `${spriteList.length}`);
             client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
@@ -86,7 +96,9 @@ client.once('ready', () => {
     //jajaja old same old same
     setTimeout(unzip, 2000);
     setTimeout(ThroughDirectory, 9000, "CalamityTexturePack");
+    //setTimeout(ThroughDirectory, 9000, "Vanilla", VanillaFiles);
     setTimeout(RunPythonScript, 9000);
+    ThroughDirectoryVanilla("Vanilla");
 });
 
 // Read messages.
@@ -125,6 +137,30 @@ client.on('message', message => {
                     .setTimestamp()
                     message.channel.send({embed}); 
 
+                    //function to create the zip folder
+                    function makezip(filename){
+                        var archiver = require('archiver');
+
+                        //declaring the name for the zip folder
+                        var output = fs.createWriteStream(`${filename}.zip`);
+                        var archive = archiver('zip');
+
+                        archive.on('error', function(err){
+                        throw err;
+                        });
+
+                        archive.pipe(output);
+                        //copying all the files from "ZipArchiverTemp" folder into the final zip folder
+                        archive.directory('./ZipArchiverTemp', false);
+
+                        archive.finalize();
+                    }
+
+                    //function to send the zip folder
+                    function sendzip(filename){
+                        message.channel.send({ files: [`${filename}.zip`] })
+                    }
+                           
                     var spritesnumber = 0;
                     //if the number of sprites exceeds 3 the bot will send a zip folder with the files instead of posting them
                     for(var l = 0; l < spriteList[i].Sprites.length; l++)
@@ -135,33 +171,8 @@ client.on('message', message => {
                         }
                     }
                     if(spritesnumber > 3)
-                    {
-    
-                        //function to stop the bot and load the zip folder
-                        function sendzip(){
-                            message.channel.send({ files: ['Sprites.zip'] })
-                        }
-                        
-                        //function to stop the bot and load the zip folder
-                        function makezip(){
-                            var archiver = require('archiver');
-
-                            //declaring the name for the zip folder
-                            var output = fs.createWriteStream('Sprites.zip');
-                            var archive = archiver('zip');
-
-                            archive.on('error', function(err){
-                            throw err;
-                            });
-
-                            archive.pipe(output);
-                            //copying all the files from "ZipArchiverTemp" folder into the final zip folder
-                            archive.directory('./ZipArchiverTemp', false);
-
-                            archive.finalize();
-                        }
-
-                        //function to stop the bot and copy the files from "./Images" folder
+                    {                
+                        //function to stop the bot and copy the files from the "./CalamityTexturePack/Content/Images" folder
                         function Copy(){
                             var path = require('path');
                             for(var k = 0; k < spriteList[i].Sprites.length; k++)
@@ -206,14 +217,11 @@ client.on('message', message => {
                         setTimeout(Copy, 1000);
 
                         //function to work after 1.5s for the issue declared above
-                        setTimeout(makezip, 1500);   
+                        setTimeout(makezip, 1500, 'Sprites');   
 
                         //function to work after 2s for the issue declared above
-                        setTimeout(sendzip, 2000);
-
-                        return
+                        setTimeout(sendzip, 2000, 'Sprites');
                     }
-
                     else 
                     {
                         // Send images.
@@ -231,8 +239,60 @@ client.on('message', message => {
                                 }
                             }
                         }
-                        return
                     }   
+                    if(args.toString().toLowerCase().endsWith("+vanilla"))
+                    {
+                        //function to stop the bot and copy the files from the "./Vanilla/Content/Images" folder
+                        function CopyVanilla(){
+                            var path = require('path');
+                            for(var k = 0; k < spriteList[i].Sprites.length; k++)
+                            { 
+                                for(var j=0; j<VanillaFiles.length; j++)
+                                    {
+                                    if (VanillaFiles[j].endsWith(spriteList[i].Sprites[k].FileName+".png"))
+                                    {
+                                        //declaring the variables for the location of the sprite image file and it's destination
+                                        var oldPath = path.join(VanillaFiles[j]);
+                                        var newPath = path.join('./ZipArchiverTemp', spriteList[i].Sprites[k].FileName + '.png');
+
+                                        //copying the image to the temporary folder
+                                        fs.copyFile(oldPath, newPath, function(err) {
+                                            if (err) {
+                                            throw err
+                                            }
+                                        });
+                                    }
+                                }
+                                
+                            }
+                        }
+                        function SendVanillaFiles(){
+                            var path = require('path');
+                            var directory = './ZipArchiverTemp';
+
+                            //removing the previous file from "ZipArchiverTemp" folder 
+                            fs.readdir(directory, (err, files) => {
+                            if (err) throw err;
+
+                            for (const file of files) {
+                            fs.unlink(path.join(directory, file), err => {
+                            if (err) throw err;
+                            });
+                            }
+                            });
+
+                            //function to work after 1s for the issue declared above
+                            setTimeout(CopyVanilla, 1000);
+
+                            //function to work after 1.5s for the issue declared above
+                            setTimeout(makezip, 1500, 'VanillaSprites');   
+
+                            //function to work after 2s for the issue declared above
+                            setTimeout(sendzip, 2000, 'VanillaSprites');
+                        }
+                        setTimeout(SendVanillaFiles, 2000);
+                    }
+                    return
                 }
                 else //2nd cycle in case the argument is a sprite file instead of a internal name
                 {
@@ -282,7 +342,15 @@ client.on('message', message => {
             var test = fs.readFileSync("b.txt", "utf-8"); 
             var WordArr = test.split('\n');
             var list = difflib.getCloseMatches(args[0].toLowerCase(), WordArr, n=10, cutoff=0.5);
-            if (list.length == 0)
+            if (args[0].toLowerCase().includes("cloud") || args[0].toLowerCase().includes("logo") || args[0].toLowerCase().includes("moon") || args[0].toLowerCase().includes("sun") || args[0].toLowerCase().includes("ui") || args[0].toLowerCase().includes("hair") || args[0].toLowerCase().includes("background") || args[0].toLowerCase().includes("splash") )
+            {
+                const embed = new Discord.MessageEmbed()
+                .setTitle("Look at the pins for ***not***  included sprites")
+                .setColor(7909985)
+                .setTimestamp()
+                return message.channel.send({embed});  
+            }
+            else if (list.length == 0)
             {
                 const embed = new Discord.MessageEmbed()
                 .setTitle("Invalid Sprite ID")
@@ -405,7 +473,7 @@ client.on('message', message => {
         .setTitle("Bot Info")
         .setDescription("```" + 
         "CTP Bot:\n" +
-        "Current version: 1.1.0\n" + 
+        "Current version: 1.1.1\n" + 
         "Bot github: https://github.com/daim0/CTPBot\n" +
         "If you come across any errors notify daim#6490 or Felipe350#5384 on discord." +
         "```")
@@ -540,8 +608,7 @@ client.on('message', message => {
             }
         }
         return;
-    }
-            
+    }        
     // random not finished sprite command.
     else if(command === 'task')
     {    
