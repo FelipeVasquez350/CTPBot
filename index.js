@@ -797,6 +797,12 @@ client.on('message', message => {
     }
     else if (command === 'updateList') {
 
+        const embed = new Discord.MessageEmbed()
+            .setTitle("Update")
+            .setDescription("hi !")
+            .setColor(7909985)
+            .setTimestamp()
+            return message.channel.send({embed});
         var updatedFiles;
         for(var i = 0; i < spriteList.length; i++)
             {
@@ -809,6 +815,9 @@ client.on('message', message => {
                                     if (Files[j].endsWith(spriteList[i].Sprites[k].FileName+".png"))
                                     {
                                         spriteList[i].Sprites[k].Sprited = true;
+                                        fs.writeFile(fileName, JSON.stringify(spriteList, null, 2), function writeJSON(err) {
+                                            if (err) return console.log(err);
+                                            });
                                         updatedFiles++;
                                     }
                                 }
