@@ -797,8 +797,8 @@ client.on('message', message => {
     }
     else if (command === 'update') {
 
-        return message.channel.send(`test`);
-        /*var updatedFiles;
+        message.channel.send(`test`);
+        var updatedFiles;
         for(var i = 0; i < spriteList.length; i++)
             {
                 for(var k = 0; k < spriteList[i].Sprites.length; k++)
@@ -820,7 +820,7 @@ client.on('message', message => {
                         }
                 
             }
-            return message.channel.send("test but better");*/
+            return message.channel.send("test but better");
     }
 });
 
