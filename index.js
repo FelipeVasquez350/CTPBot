@@ -90,7 +90,7 @@ client.once('ready', () => {
             console.log(Files)
             console.log(VanillaFiles);
             console.log('Ctp Bot running.\nContact Daim if help is needed.\n Current list length: ' + `${spriteList.length}`);
-            client.user.setActivity("Just make it look good! [Pack id: "+id+"] | "+Files.length+"/12608");
+            client.user.setActivity("Simply don't jand! [Pack id: "+id+"] | "+Files.length+"/12608");
           });
     }
     //jajaja old same old same
@@ -794,6 +794,37 @@ client.on('message', message => {
             .setTimestamp()
             return message.channel.send({embed});  
         }   
+    }
+    else if (command === 'updateList') {
+
+        var updatedFiles;
+        for(var i = 0; i < spriteList.length; i++)
+            {
+                for(var k = 0; k < spriteList[i].Sprites.length; k++)
+                        {
+                            if(!spriteList[i].Sprites[k].Sprited)
+                            {
+                                for(var j=0; j<Files.length; j++)
+                                {
+                                    if (Files[j].endsWith(spriteList[i].Sprites[k].FileName+".png"))
+                                    {
+                                        spriteList[i].Sprites[k].Sprited = true;
+                                        updatedFiles++;
+                                    }
+                                }
+                            }
+                        }
+                
+            }
+            const embed = new Discord.MessageEmbed()
+            .setTitle("Update")
+            .setDescription("```" + 
+            'List has been updated\n' + 
+            `Updated files: ${updatedFiles}.\n` + 
+            "```")
+            .setColor(7909985)
+            .setTimestamp()
+            return message.channel.send({embed});
     }
 });
 
