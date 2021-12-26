@@ -797,12 +797,7 @@ client.on('message', message => {
     }
     else if (command === 'updateList') {
 
-        const embed = new Discord.MessageEmbed()
-            .setTitle("Update")
-            .setDescription("hi !")
-            .setColor(7909985)
-            .setTimestamp()
-            return message.channel.send({embed});
+        message.channel.send(`test`);
         var updatedFiles;
         for(var i = 0; i < spriteList.length; i++)
             {
@@ -825,15 +820,7 @@ client.on('message', message => {
                         }
                 
             }
-            const embed = new Discord.MessageEmbed()
-            .setTitle("Update")
-            .setDescription("```" + 
-            'List has been updated\n' + 
-            `Updated files: ${updatedFiles}.\n` + 
-            "```")
-            .setColor(7909985)
-            .setTimestamp()
-            return message.channel.send({embed});
+            return message.channel.send("test but better");
     }
 });
 
