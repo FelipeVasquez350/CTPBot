@@ -820,7 +820,7 @@ client.on('message', message => {
                         }
                 
             }
-            return message.channel.send("test but better");
+            return message.channel.send(`test but better${updatedFiles}`);
     }
 });
 
