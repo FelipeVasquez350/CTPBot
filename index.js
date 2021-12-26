@@ -473,7 +473,7 @@ client.on('message', message => {
         .setTitle("Bot Info")
         .setDescription("```" + 
         "CTP Bot:\n" +
-        "Current version: 1.1.1\n" + 
+        "Current version: 1.1.2\n" + 
         "Bot github: https://github.com/daim0/CTPBot\n" +
         "If you come across any errors notify daim#6490 or Felipe350#5384 on discord." +
         "```")
