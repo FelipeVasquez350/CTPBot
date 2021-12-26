@@ -795,24 +795,20 @@ client.on('message', message => {
             return message.channel.send({embed});  
         }   
     }
-    else if (command === 'update') {
+    /*else if (command === 'update') {
 
         message.channel.send(`test`);
         var updatedFiles;
-        var a, b, c;
         for(var i = 0; i < spriteList.length; i++)
             {
                 for(var k = 0; k < spriteList[i].Sprites.length; k++)
                         {
                             if(!spriteList[i].Sprites[k].Sprited)
                             {
-                                a++;
                                 for(var j=0; j<Files.length; j++)
                                 {
-                                    b++;
                                     if (Files[j].endsWith(spriteList[i].Sprites[k].FileName+".png"))
                                     {
-                                        c++;
                                         spriteList[i].Sprites[k].Sprited = true;
                                         fs.writeFile(fileName, JSON.stringify(spriteList, null, 2), function writeJSON(err) {
                                             if (err) return console.log(err);
@@ -825,7 +821,7 @@ client.on('message', message => {
                 
             }
             return message.channel.send(`test but better${updatedFiles},${a},${b},${c}`);
-    }
+    }*/
 });
 
 
