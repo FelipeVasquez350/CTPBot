@@ -8257,7 +8257,7 @@
       { 
         "FileName": "NPC_316",
         "Type": "NPC",
-        "Sprited": false
+        "Sprited": true
       } 
     ] 
   }, 
