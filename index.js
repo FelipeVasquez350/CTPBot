@@ -40,7 +40,7 @@ client.once('ready', () => {
     channel.messages.fetch().then(messages => {
         messages.forEach(msg => {
             if(msg.attachments.last()){
-                if(msg.attachments.last().name === 'CalamityTexturePack.zip' && id === 0){//Download only the vanilla texture pack
+                if(msg.attachments.last().name === 'CalamityTexturePack.zip'){//Download only the vanilla texture pack
                    download(msg.attachments.last().url);
                    console.log(msg.attachments.last());
                    id = msg.attachments.last().id;
