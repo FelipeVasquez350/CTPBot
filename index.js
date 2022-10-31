@@ -34,7 +34,7 @@ client.once('ready', () => {
             .on('error', console.error)
             .pipe(fs.createWriteStream('CalamityTexturePack.zip'));
     }    
-
+    // yea
     const channel = client.channels.cache.get('473693829795676208');
     let id = 0;
     channel.messages.fetch().then(messages => {
