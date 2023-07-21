@@ -48,6 +48,16 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
   else if(interaction.isButton())
     input = interaction.message.embeds[0].title!;
 
+  
+  if(input == "EXTRA") {
+    const errorEmbed = new EmbedBuilder()
+     .setColor('#D70022')
+     .setTitle(`Error`)
+     .setDescription(`We kindly ask you not to look up the equivalent of 194 Blade of Grass in one query (it literally doesn't fit in the embed fields).`)
+     .toJSON();
+    interaction.reply({embeds: [errorEmbed]});            
+    return;
+  }
   //The prisma query structure
   const entities = await prisma.internalNames.findMany({
     where: {
@@ -214,9 +224,9 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
 
 
 
-      const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [InfoButton(entity.name.replaceAll(" ", "-"))];
+      const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [InfoButton(input.replaceAll(" ", "-"))];
       if (HasImages) 
-        components.push(ImageMenu(entity.Images));
+        components.push(ImageMenu(entity.Images.slice(0,25)));
 
       const entityEmbed = new EmbedBuilder()
         .setColor('#23a55a')

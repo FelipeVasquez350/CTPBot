@@ -40,7 +40,10 @@ async function fetchEntityImages(input: string, ctp: boolean): Promise<boolean> 
   const result = await prisma.images.findMany({
     where: {
       InternalName: {
-        name: input.replaceAll("-", " ")
+        OR: [
+          {name: input.replaceAll("-", " ")},
+          {internal_name: input.replaceAll("-", " ")}
+        ]
       },
     },
     select: {

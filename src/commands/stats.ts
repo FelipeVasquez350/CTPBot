@@ -34,6 +34,8 @@ async function scanFolder(folderPath: string): Promise<Stats> {
       total += sub_stats.total;
       misspellings += sub_stats.misspellings;
       wrong_dimensions += sub_stats.wrong_dimensions;
+      misspellings_list = misspellings_list.concat(sub_stats.misspellings_list);
+      wrong_dimensions_list = wrong_dimensions_list.concat(sub_stats.wrong_dimensions_list);
     } else {
       total++;
       const relativePath = path.relative('archive/Content', folderPath);
@@ -121,7 +123,7 @@ export async function execute(interaction: CommandInteraction) {
 
   const embed = new EmbedBuilder()
     .setColor('#23a55a')
-    .setTitle('Status')
+    .setTitle('Stats')
     .addFields(fields)
     .toJSON();
   

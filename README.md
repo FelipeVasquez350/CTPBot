@@ -48,12 +48,14 @@ Same as info but the choice is randomized and you have a filter for the query
 
 ### Status
 > /status
+
 Details about the current status of the bot
 
 
-### ???
-> TexturePackData:
-Details regarding the completion rate, file errors (names, size, etc) and useful links
+### Stats
+> /stats
+
+Details regarding the pack version, completion rate and file errors (names, size)
 
 
 ### Update
@@ -88,6 +90,71 @@ From the switch from the old 1.1.0 version to the new 2.0 apart from slash comma
 
 - Deployment moved from Heroku (bye bye free dynos) to Fly.io (how does it stay up is unknown so whenever you use it either pray/thank the devs or make a donation). This means now the bot can be self-deployed as a Docker Container! (Disclaimer: i have no idea how to make them, or even if this part i'm writing gets released alongside a public release)
 
+## Deployment
+There are two main ways to run the bot locally on your machine:
+
+### A) Clone the repo
+   These instructions assume you're operating through the command line (preferably in a GNU/Linux enviroment) but they can be done manually with the Windows file explorer or in any GUI-provided OS.
+
+   Also you'll be required to have installed [NodeJS](https://nodejs.org/en) v20.4.0 or older in your machine, and also having the Node Package Manager aka npm installed too in the case it doesn't come pre-installed in your NodeJS installation  (as of writing v9.8.0)
+
+1) clone/(fork for contributing) this repository
+   
+   (can also be done by clicking con the (only) green Code button and selecting "Download ZIP")
+   > git clone https://github.com/FelipeVasquez350/CTPBot.git
+
+2) Enter the directory
+   >cd CTPBot
+
+   2.1 If you're trying to use a fork of the project (currently this v2.0) the also run
+   > git checkout v2.0
+
+3) Copy the enviroment variables file in order to configure the bot (required in order to continue)
+   >cp example.env .env
+
+4) Open the terminal (if you haven't yet) and run the following in order to generate the bot build files.
+   >npm run build
+
+5) Once it has finished without errors (it may give warning on some packages) run the bot:
+
+   a. in Production
+   > npm start
+
+   b. in Developement
+   > npm run dev
+6) After making sure the bot works remember the slash commands are per guild-only, so you'll need to run the following to make them apprear in your server (given you have put the correct GUILD_ID in the .env file)
+   > npm run deploy
+
+   To remove them you can also run
+   > npm run withdraw
+
+7) Remember the Vanilla images folder is not included with this repo, so you'll need to get them by yourself (Google TConvert)
+
+
+### B) Through the Docker Image
+To avoid any kind of (works on my machine, on yours does not) you can use the Docker engine to run a preconfigured enviroment to run the bot in without having to install any dependencies (apart from docker itself obviously)
+
+Running one for the first time may seem confusing so i'm going to explain it as much as possible.
+
+1) Make sure you have Docker installed and running, see https://docs.docker.com/engine/install/
+
+2) Pull the image from the repository
+   > docker pull ghcr.io/felipevasquez350/ctpbot-v2:latest
+
+3) Once downloaded the image there's the hard part, making sure it runs correctly, the command is the following
+   > docker run -it --env-file .env -v {path_to_your_parent_images_folder}:{TERRARIA_VANILLA_FILES_PATH} ctpbot-v2
+   
+   Here's the breakdown
+   - docker run: the base command to run an image
+
+   - -it this will allow you to see the output of the bot in the current terminal, in case you don't want to and made sure it works use -d instead
+
+   - --env-file .env: Here we're specifying the file to read the enviroment variables from
+
+   - -v {path_to_your_parent_images_folder}:{TERRARIA_VANILLA_FILES_PATH}: this specifies which folder docker will mount inside the running image from your local machine (the path before ":" ) and the path it will find inside said running image (the path after ":" ). The former has to refelect the path inside the .env file for the Vanilla Images folder 
+
+   - ctpbot-v2: the name of the image
+ 
 
 ## Contributing
 <details>
