@@ -139,7 +139,7 @@ Running one for the first time may seem confusing so i'm going to explain it as 
 1) Make sure you have Docker installed and running, see https://docs.docker.com/engine/install/
 
 2) Pull the image from the repository
-   > docker pull ghcr.io/felipevasquez350/ctpbot-v2:latest
+   > docker pull ghcr.io/felipevasquez350/ctpbot:v2.0
 
 3) Once downloaded the image there's the hard part, making sure it runs correctly, the command is the following
    > docker run -it --env-file .env -v {path_to_your_parent_images_folder}:{TERRARIA_VANILLA_FILES_PATH} ctpbot-v2
