@@ -26,10 +26,10 @@ export const data = new SlashCommandBuilder()
  * Executes the interaction's command code.
  * @param {CommandInteraction} interaction The istance of the interaction.
  */
-export async function execute(interaction: CommandInteraction | StringSelectMenuInteraction | ButtonInteraction, message: Message<boolean> | null = null) { 
+export async function execute(interaction: CommandInteraction | StringSelectMenuInteraction | ButtonInteraction, message: Message<boolean> | null = null, entity_name: string | null = null) { 
   var input = "";
 
-  if(interaction.isCommand()) {
+  if(interaction.isCommand() && entity_name == null) {
     if(interaction.options.data.length == 0) {
       const errorEmbed = new EmbedBuilder()
       .setColor('#D70022')
@@ -47,17 +47,9 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
     input = interaction.values[0];
   else if(interaction.isButton())
     input = interaction.message.embeds[0].title!;
+  else if(entity_name != null)
+    input = entity_name;
 
-  
-  if(input == "EXTRA") {
-    const errorEmbed = new EmbedBuilder()
-     .setColor('#D70022')
-     .setTitle(`Error`)
-     .setDescription(`We kindly ask you not to look up the equivalent of 194 Blade of Grass in one query (it literally doesn't fit in the embed fields).`)
-     .toJSON();
-    interaction.reply({embeds: [errorEmbed]});            
-    return;
-  }
   //The prisma query structure
   const entities = await prisma.internalNames.findMany({
     where: {

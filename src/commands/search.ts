@@ -2,6 +2,7 @@ import { SlashCommandBuilder, CommandInteraction, ButtonInteraction, EmbedBuilde
 import { SearchMenu } from "../components";
 import prisma from '../prisma';
 import SearchButtons from "../components/search_buttons";
+import { execute as info } from "./info"
 
 export const data = new SlashCommandBuilder()
   .setName('search')
@@ -62,12 +63,16 @@ export async function execute(interaction: CommandInteraction | ButtonInteractio
     .setDescription(`Found ${entity.length} entities`)
     .toJSON();
   
-  if(entity.length != 0) { 
+  if(entity.length == 1) {
+    info(interaction, null, entity[0].name)
+    return;
+  }
+  else if(entity.length != 0) { 
     if(interaction.isCommand())
       interaction.reply({ embeds: [embed], components: [SearchMenu(entity.slice(0,25)), SearchButtons(page == 0, entity.length < 25, page, input, type)]});            
     else 
       interaction.update({ embeds: [embed], components: [SearchMenu(entity.slice(0,25)), SearchButtons(page == 0, entity.length < 25, page, input, type)]});
-  }
+    }
   else
     interaction.reply({ content: 'No entity found', ephemeral: true });
 }  

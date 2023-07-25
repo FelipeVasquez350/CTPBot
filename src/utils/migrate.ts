@@ -139,4 +139,143 @@ async function addFixedEntities(correct: Entry): Promise<boolean> {
   return true;
 }
 
+
+async function getFolder(directory: string) {
+  const files = fs.readdirSync(directory);
+  const map: string[] = [];
+  
+  for (const file of files) {
+    const filePath = path.join(directory, file);
+    const stats = fs.statSync(filePath);
+  
+    if (stats.isDirectory()) {
+      const found = await getFolder(filePath);
+      map.push(...found);
+    }
+    else {
+      map.push(path.relative('archive/Vanilla/', directory)+"/"+file);
+    }
+  }
+  return map;
+}
+  
+async function checkForMissing() {
+  const folder = await getFolder("archive/Vanilla");
+  const dbImages = await prisma.images.findMany({
+    select: {
+      filename: true,
+      path: true
+    }
+  });
+
+  for (const file of folder) {
+   // fs.writeFileSync("test.txt", file+"\n", {flag: "a"})
+    if(!dbImages.find((image) => (image.path+"/"+image.filename+".png") == file)) {
+      console.log(`could not find file: ${file}`)
+      fs.writeFileSync("mssingImages.txt", `${file}\n`, {flag: "a"})
+    }
+  }
+
+//onsole.log(folder);
+}
+
+async function checkForWrongSize() {
+  const dbImages = await prisma.images.findMany({
+    select: {
+      image_id: true,
+      filename: true,
+      path: true,
+      width: true,
+      height: true
+    }
+  });
+
+  for (const image of dbImages) {
+    try{
+      const size = sizeOf(`archive/Vanilla/${image.path}/${image.filename}.png`);
+      if(size.width != image.width || size.height != image.height) {
+        console.log(`wrong size for ${image.path}/${image.filename}.png: ${size.width}x${size.height} instead of ${image.width}x${image.height}`);
+        //fs.writeFileSync("wrongSize.txt", `${image.path}/${image.filename}.png: ${size.width}x${size.height} instead of ${image.width}x${image.height}\n`, {flag: "a"})
+        await prisma.images.update({
+          where: {
+            image_id: image.image_id,
+            filename: image.filename,
+            path: image.path
+          },
+          data: {
+            width: size.width,
+            height: size.height
+          }
+        });
+      }
+    }
+    catch(err) {
+      console.log(err);
+    }
+  }
+}
+
+async function checkForDanglingRef() {
+  const dbImages = await prisma.images.findMany({
+    select: {
+      image_id: true,
+      internal_id: true,
+    }
+  });
+
+  const dbInternalNames = await prisma.internalNames.findMany({
+    select: {
+      internal_id: true
+    }
+  });
+
+  for (const image of dbImages) {
+    if(!dbInternalNames.find((internalName) => internalName.internal_id == image.internal_id)) {
+      console.log(`dangling reference for ${image.image_id}`);
+      //fs.writeFileSync("danglingRef.txt", `${image.image_id}\n`, {flag: "a"})
+      // await prisma.images.delete({
+      //   where: {
+      //     image_id: image.image_id
+      //   }
+      // });
+    }
+  }
+}
+
+async function updatePackDB() {
+  const images = await prisma.images.findMany();
+  
+  images.forEach(async image => {
+    try {
+      if (fs.existsSync(`archive/Content/${image.path}/${image.filename}.png`) != image.status) {
+        console.log(`${image.filename}.png needs update to ${!image.status}`)
+
+        await prisma.images.update({
+          where: {
+            image_id: image.image_id
+          },
+          data: {
+            status: !image.status
+          }
+        });
+        console.log(`${image.filename}.png updated to ${!image.status}`)
+      }
+    } catch(err) {
+      console.error(err)
+    }    
+  });
+}
+
 //migrateData("src/utils/List.json");
+
+/* THINGS TO CHECK WHEN MIGRATING
+  - Check for missing images
+  - Check for wrong size
+  - Check for dangling references for images
+  - Update the pack database to the latest version
+*/ 
+
+// checkForMissing();
+// checkForWrongSize();
+// checkForDanglingRef();
+// updatePackDB();
