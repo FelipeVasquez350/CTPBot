@@ -266,6 +266,31 @@ async function updatePackDB() {
   });
 }
 
+async function addTilesToOutlines() {
+  const images = await prisma.images.findMany();
+
+  for (const image of images) {
+    if(image.path == "Images/Misc/TileOutlines" && fs.existsSync(`archive/Vanilla/Images/${image.filename}.png`)) {
+      const size = sizeOf(`archive/Vanilla/Images/${image.filename}.png`);
+      console.log(`adding ${image.filename}.png to database`);
+      await prisma.images.create({
+        data: {
+          internal_id: image.internal_id,
+          filename: image.filename,
+          path: "Images",
+          type: image.type,
+          status: image.status,
+          width: size.width,
+          height: size.height
+        }
+      });
+      
+    }
+  }
+
+
+}
+
 //migrateData("src/utils/List.json");
 
 /* THINGS TO CHECK WHEN MIGRATING
@@ -275,7 +300,8 @@ async function updatePackDB() {
   - Update the pack database to the latest version
 */ 
 
-// checkForMissing();
-// checkForWrongSize();
-// checkForDanglingRef();
-// updatePackDB();
+//checkForMissing();
+//checkForWrongSize();
+//checkForDanglingRef();
+//updatePackDB();
+//addTilesToOutlines();

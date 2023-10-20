@@ -11,7 +11,7 @@ function isAPISelectMenuOption(value: (StringSelectMenuOptionBuilder | APISelect
 
 function areOptionsTheSame(stringOptions: APISelectMenuOption[], value: Images) {
   for(var option of stringOptions) {
-    if(option.label == value.filename)
+    if(option.label == value.filename && option.description == `${value.type} | ${value.path} | ${value.width}x${value.height}`)
       return true;
   }
 }
@@ -27,7 +27,7 @@ function ImageMenu(values: Images[] | APISelectMenuOption[], currentOptions: str
         }
         stringOptions.push({
           label: value.filename!,
-          description: `${value.type} | ${value.width}x${value.height}`,
+          description: `${value.type} | ${value.path} | ${value.width}x${value.height}`,
           value: `${value.filename}, ${value.path}`
         });
       }
@@ -35,7 +35,6 @@ function ImageMenu(values: Images[] | APISelectMenuOption[], currentOptions: str
   }
   else { 
     values.map((value) => {
-      console.log(`currentOptions: ${currentOptions}`);
       if(currentOptions.includes(value.value) && currentOptions.length != 0) 
         value.default = true;
       else

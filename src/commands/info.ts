@@ -32,9 +32,9 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
   if(interaction.isCommand() && entity_name == null) {
     if(interaction.options.data.length == 0) {
       const errorEmbed = new EmbedBuilder()
-      .setColor('#D70022')
-      .setTitle(`Error`)
-      .setDescription(`An error has okuued.\nNo input found.`)
+      .setColor('#EA8000')
+      .setTitle(`Help`)
+      .setDescription("You seem to have used the command without any input.\nIn case you're confused on how to use this command, here's a quick guide:\n### Command Syntax:\n**/info** `name: ` *or* `internal_name: `\n\n**name**: Is the name of the entity you want to search for.\n**internal_name**: Is the [Internal name](https://terraria.wiki.gg/wiki/Data_IDs) of the entity you want to search for.\n\nFor both of them there's and autocomplete selection to make searching easier\n\nThey are both optional (i don't make the rules, discord's api does), but you need to specify at least one of them in order for the command to work.\n\nIf you try to use them both, the bot will rely only on the `name` option.")
       .toJSON();
       interaction.reply({embeds: [errorEmbed]});            
       return;
@@ -125,7 +125,6 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
 
     //If the entity has no images
     if (entity.Images.length == 0) {
-      console.log(entity)
       const errorEmbed = new EmbedBuilder()
       .setColor('#D70022')
       .setTitle(`${input}`)
@@ -139,7 +138,7 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
         { name: 'Name', value: entity.name, inline: true },
         { name: 'InternalName', value: entity.internal_name.join(", "), inline: true  },
       ];
-
+      var disableTable = false;
       var imageTable = new AsciiTable3().setHeading("Filename","Path","Status").setAlignCenter(0).setStyle("unicode-mix");
       var musicTable = new AsciiTable3().setHeading("Music_id").setAlignCenter(0).setStyle("unicode-mix");
       var soundTable = new AsciiTable3().setHeading("Sound_id").setAlignCenter(0).setStyle("unicode-mix");
@@ -153,6 +152,9 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
         }
         imageTable.addRow(image.filename, image.path, image.status);
         imageTable.toString
+
+        if(`${image.filename}+${image.path}+${image.status}`.length > 49)
+          disableTable = true;
       }); 
       stringTable += imageTable;
 
@@ -184,14 +186,21 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
       if(stringTable.length > 1024) {
         const tableParts = [];
         const tableRows = stringTable.split("\n");
+  
         let tablePart = "";
         for (const row of tableRows) {
-          if (tablePart.length + row.length > 1024) {
+          if (tablePart.length + row.length > 999) {
             tablePart+= "```";
             tableParts.push(tablePart);
             tablePart = "```";
           }
-          tablePart += row + "\n";
+          if(disableTable) {
+            //Remove the unicode characters from the table cuz discord has a limit for horizontal characters
+            const regex = /[║╔═╗╚╝╤╧╢╟]|─(?!.*─)/g;
+            tablePart += row.replace(regex, "") + "\n";
+          }
+          else
+            tablePart += row + "\n";
         }
         if (tablePart.length > 0) {
           tableParts.push(tablePart);

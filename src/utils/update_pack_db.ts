@@ -44,7 +44,7 @@ export async function updatePackDB(packVersion: string) {
     console.log("Update complete");
   }
   else {
-    console.log("Non-Windows detected");
+    console.log("Non-Windows detected, attempting Linux update");
     execSync(`npm run update:Linux --var=${packVersion}`);
     console.log("Update complete");
   }
