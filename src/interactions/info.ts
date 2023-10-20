@@ -35,8 +35,6 @@ export async function Select(interaction: StringSelectMenuInteraction) {
 async function fetchEntityImages(input: string, ctp: boolean): Promise<boolean> {
   let zipname = input
   zipname += ctp ? "_ctp" : "_vanilla";
-  console.log(zipname);
-  console.log(input);
   const result = await prisma.images.findMany({
     where: {
       InternalName: {
@@ -66,7 +64,7 @@ async function fetchEntityImages(input: string, ctp: boolean): Promise<boolean> 
         empty = false;
       }
       else if(!ctp) {
-        archive.file(`${config.TERRARIA_VANILLA_FILES_PATH}/${image.path}/${image.filename}.png`, {name: `${image.filename}.png`});
+        archive.file(`${config.VANILLA_FILES_PATH}/${image.path}/${image.filename}.png`, {name: `${image.filename}.png`});
       }
     }
     await archive.finalize();

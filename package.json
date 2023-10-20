@@ -1,7 +1,7 @@
 {
   "name": "ctp-bot",
   "description": "remake of the calamity texture pack bot",
-  "version": "2.0.1",
+  "version": "2.0.3",
   "main": "index.js",
   "scripts": {
     "fetch": "wget https://github.com/Altalyra/CalamityTexturePack/releases/latest/download/CalamityTexturePack.zip -qO CalamityTexturePack.zip && unzip -qo CalamityTexturePack.zip -d ./archive",

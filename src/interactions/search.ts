@@ -22,6 +22,5 @@ export function Previous(interaction: ButtonInteraction) {
 
 export function Next(interaction: ButtonInteraction) {
   var page: number = parseInt(interaction.customId.split('_')[2])+1;
-  console.log(page);
   search.execute(interaction,page);
 }

@@ -41,7 +41,7 @@ async function scanFolder(folderPath: string): Promise<Stats> {
       const relativePath = path.relative('archive/Content', folderPath);
       const size = sizeOf(filePath);
       try {      
-        const vanillaPath = path.join(config.TERRARIA_VANILLA_FILES_PATH, relativePath, file);    
+        const vanillaPath = path.join(config.VANILLA_FILES_PATH, relativePath, file);    
         const vanillaSize = sizeOf(vanillaPath);        
         if(size.width != vanillaSize.width || size.height != vanillaSize.height) {
           wrong_dimensions++;
@@ -81,7 +81,7 @@ async function getTotalImagesVanilla(vanillaPath: string): Promise<number> {
 export async function execute(interaction: CommandInteraction) {
   
   const stats = await scanFolder("archive/Content/Images/");
-  const totalVanilla = await getTotalImagesVanilla(`${config.TERRARIA_VANILLA_FILES_PATH}/Images/`);
+  const totalVanilla = await getTotalImagesVanilla(`${config.VANILLA_FILES_PATH}/Images/`);
    
   fs.writeFileSync('archive/misspellings.txt', stats.misspellings_list.join('\n'));
   fs.writeFileSync('archive/wrong_dimensions.txt', stats.wrong_dimensions_list.join('\n'));
@@ -128,5 +128,9 @@ export async function execute(interaction: CommandInteraction) {
     .toJSON();
   
   await interaction.reply({embeds: [embed]})
-  await interaction.followUp({files: [{attachment: 'archive/misspellings.txt', name: 'misspellings.txt'}, {attachment: 'archive/wrong_dimensions.txt', name: 'wrong_dimensions.txt'}]});
+  if (stats.misspellings > 0) 
+    await interaction.followUp({files: [{attachment: 'archive/misspellings.txt', name: 'misspellings.txt'}]});
+
+  if(stats.wrong_dimensions > 0) 
+    await interaction.followUp({files: [{attachment: 'archive/wrong_dimensions.txt', name: 'wrong_dimensions.txt'}]});
 }

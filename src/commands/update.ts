@@ -5,7 +5,7 @@ import prisma from '../prisma';
 import fs from "fs";
 
 export const data = new SlashCommandBuilder()
-  .setName('fetchupdate')
+  .setName('update')
   .setDescription('Updates the bot to the latest version of the pack it can find on the GitHub Page.')
   .setDefaultMemberPermissions(PermissionFlagsBits.ViewAuditLog);
 

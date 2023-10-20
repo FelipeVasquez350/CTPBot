@@ -21,8 +21,6 @@ async function InteractionHandler(interaction: Interaction<CacheType>) {
       }
       else {
         const [interactionName, interactionFunction] = interaction.customId.split('_');
-        console.log(interactionName, interactionFunction);
-        console.log(interactions);
         await interactions[interactionName][interactionFunction](interaction);
         resolve();
       } 
