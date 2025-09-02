@@ -4,7 +4,7 @@
   "version": "2.0.4",
   "main": "index.js",
   "scripts": {
-    "fetch": "wget https://github.com/Altalyra/CalamityTexturePack/releases/latest/download/CalamityTexturePack.zip -qO CalamityTexturePack.zip && unzip -qo CalamityTexturePack.zip -d ./archive",
+    "fetch": "wget https://github.com/Altalyra/CalamityTexturePack/releases/latest/download/CalamityTexturePack.zip -qO CalamityTexturePack.zip && unzip -qo CalamityTexturePack.zip -d ./archive && mv ./archive/CalamityTexturePack/* ./archive && rmdir ./archive/CalamityTexturePack",
     "build": "npx tsc",
     "start": "npm run fetch && node build/index.js",
     "dev": "concurrently \"tsc --watch\" \"nodemon build/index.js\"",
