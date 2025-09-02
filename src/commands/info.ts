@@ -223,17 +223,21 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
         entityFields.push({ name: 'Data', value: stringTable, inline: false });
       }
 
-
-
       const components: APIActionRowComponent<APIMessageActionRowComponent>[] = [InfoButton(input.replaceAll(" ", "-"))];
       if (HasImages) 
         components.push(ImageMenu(entity.Images.slice(0,25)));
+    
+    // Thank you discord for breaking the embeds
+    //   const entityEmbed = new EmbedBuilder()
+    //     .setColor('#23a55a')
+    //     .setTitle(`${input}`)
+    //     .addFields(entityFields)
+    //     .toJSON();
 
-      const entityEmbed = new EmbedBuilder()
-        .setColor('#23a55a')
-        .setTitle(`${input}`)
-        .addFields(entityFields)
-        .toJSON();
+      var content = "";
+      for (var i = 0; i < entityFields.length; i++) {
+        content += `${entityFields[i].name}: ${entityFields[i].value}\n`;
+      }
 
       if(message != null) {
 
@@ -245,7 +249,7 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
             imageMessage.delete();
           }
           if(interaction.isAnySelectMenu())
-            message.edit({ embeds: [entityEmbed], components: components });
+            message.edit({content: content, components: components });
           else
             message.delete();
         }
@@ -255,9 +259,9 @@ export async function execute(interaction: CommandInteraction | StringSelectMenu
           interaction.update({components: [SearchMenu(interaction.component.options, input), interaction.message.components[1]]});
         }
         else 
-          interaction.reply({ embeds: [entityEmbed], components: components });
+          interaction.reply({content: content, components: components });
       }
-      else interaction.reply({ embeds: [entityEmbed], components: components });  
+      else interaction.reply({content: content, components: components });  
     }
   }
   //IF the query returns no results
