@@ -1,10 +1,10 @@
 {
   "name": "ctp-bot",
   "description": "remake of the calamity texture pack bot",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "main": "index.js",
   "scripts": {
-    "fetch": "wget https://github.com/Altalyra/CalamityTexturePack/releases/latest/download/CalamityTexturePack.zip -qO CalamityTexturePack.zip && unzip -qo CalamityTexturePack.zip -d ./archive && mv ./archive/CalamityTexturePack/* ./archive && rmdir ./archive/CalamityTexturePack",
+    "fetch": "./fetch.sh",
     "build": "npx tsc",
     "start": "npm run fetch && node build/index.js",
     "dev": "concurrently \"tsc --watch\" \"nodemon build/index.js\"",

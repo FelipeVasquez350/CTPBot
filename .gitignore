@@ -134,3 +134,4 @@ build
 archive/*
 !archive/.gitkeep
 CalamityTexturePack.zip
+/generated/prisma
