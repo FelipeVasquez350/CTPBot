@@ -1,37 +1,32 @@
-import { Images } from '.prisma/client';
+import { Images } from '../generated/prisma/client';
 import { ActionRowBuilder, APISelectMenuOption, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from 'discord.js';
+
+export const IMAGES_PER_PAGE = 25;
 
 function areImages(value: Images[] | APISelectMenuOption[]): value is Images[] {
   return (value as Images[])[0].status !== undefined ;
 }
 
-function isAPISelectMenuOption(value: (StringSelectMenuOptionBuilder | APISelectMenuOption)[]): value is APISelectMenuOption[] {
-  return (value as APISelectMenuOption[])[0].label !== undefined;
-}
-
-function areOptionsTheSame(stringOptions: APISelectMenuOption[], value: Images) {
-  for(var option of stringOptions) {
-    if(option.label == value.filename && option.description == `${value.type} | ${value.path} | ${value.width}x${value.height}`)
-      return true;
+export function ImageOptions(images: Images[]): APISelectMenuOption[] {
+  const options: APISelectMenuOption[] = [];
+  for (const image of images) {
+    if (image.status != true) continue;
+    const description = `${image.type} | ${image.path} | ${image.width}x${image.height}`;
+    if (options.some(option => option.label == image.filename && option.description == description)) continue;
+    options.push({ label: image.filename!, description: description, value: `${image.filename}, ${image.path}` });
   }
+  return options;
 }
 
-function ImageMenu(values: Images[] | APISelectMenuOption[], currentOptions: string[] = []) {
+export function ImagePageCount(images: Images[]) {
+  return Math.max(1, Math.ceil(ImageOptions(images).length / IMAGES_PER_PAGE));
+}
+
+function ImageMenu(values: Images[] | APISelectMenuOption[], currentOptions: string[] = [], page: number = 0) {
   var stringOptions: (StringSelectMenuOptionBuilder | APISelectMenuOption)[] = [];
 
   if (areImages(values)) {
-    for (const value of values) {
-      if (value.status == true) {
-        if (stringOptions.length >0 && isAPISelectMenuOption(stringOptions) && areOptionsTheSame(stringOptions, value)) {
-          continue;
-        }
-        stringOptions.push({
-          label: value.filename!,
-          description: `${value.type} | ${value.path} | ${value.width}x${value.height}`,
-          value: `${value.filename}, ${value.path}`
-        });
-      }
-    }
+    stringOptions = ImageOptions(values).slice(page * IMAGES_PER_PAGE, page * IMAGES_PER_PAGE + IMAGES_PER_PAGE);
   }
   else { 
     values.map((value) => {

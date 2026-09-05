@@ -1,4 +1,4 @@
-import { execute } from "../commands/info";
+import { execute, parseSections, sectionSuggestions } from "../commands/info";
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -62,4 +62,47 @@ test("Info command", async () => {
       },
     ],   
   });
+});
+test("Type option parses several tables", () => {
+  expect([...parseSections("")]).toEqual(["Images"]);
+  expect([...parseSections("Statues")]).toEqual(["Images"]);
+  expect([...parseSections("All")]).toEqual(["Images", "Sounds", "Music", "LocalizationTexts"]);
+  expect([...parseSections("all")]).toEqual(["Images", "Sounds", "Music", "LocalizationTexts"]);
+
+  expect([...parseSections("Images")]).toEqual(["Images"]);
+  expect([...parseSections("Images,Sounds")]).toEqual(["Images", "Sounds"]);
+  expect([...parseSections(" images , LOCALIZATIONS ")]).toEqual(["Images", "LocalizationTexts"]);
+  expect([...parseSections("LocalizationTexts")]).toEqual(["LocalizationTexts"]);
+  expect([...parseSections("Music,Music")]).toEqual(["Music"]);
+});
+
+test("Type option suggestions accumulate", () => {
+  expect(sectionSuggestions("")).toEqual([
+    { name: "All", value: "All" },
+    { name: "Images", value: "Images" },
+    { name: "Sounds", value: "Sounds" },
+    { name: "Music", value: "Music" },
+    { name: "Localizations", value: "LocalizationTexts" },
+  ]);
+
+  expect(sectionSuggestions("a")[0]).toEqual({ name: "All", value: "All" });
+  expect(sectionSuggestions("so")).toEqual([{ name: "Sounds", value: "Sounds" }]);
+
+  expect(sectionSuggestions("Images")).toEqual([
+    { name: "Images", value: "Images" },
+    { name: "Images, Sounds", value: "Images,Sounds" },
+    { name: "Images, Music", value: "Images,Music" },
+    { name: "Images, Localizations", value: "Images,LocalizationTexts" },
+  ]);
+
+  expect(sectionSuggestions("Images,mu")).toEqual([
+    { name: "Images", value: "Images" },
+    { name: "Images, Music", value: "Images,Music" },
+  ]);
+
+  expect(sectionSuggestions("Images,Sounds,Music,LocalizationTexts")).toEqual([
+    { name: "Images, Sounds, Music, Localizations", value: "Images,Sounds,Music,LocalizationTexts" },
+  ]);
+
+  expect(sectionSuggestions("Images,zzz").length).toBe(4);
 });
