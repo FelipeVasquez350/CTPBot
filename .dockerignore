@@ -5,3 +5,4 @@ dist
 .env
 npm-debug.log
 archive
+prisma/*.bak-*

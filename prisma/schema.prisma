@@ -1,11 +1,12 @@
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  runtime    = "nodejs"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model Entity {
@@ -31,7 +32,7 @@ model LocalizationTexts {
   localization_id    String
   localization_type  String
   localization_en_us String?
-  internal_id        Int  
+  internal_id        Int
   status      Boolean
   last_edit          DateTime?
   user               String?
@@ -41,7 +42,7 @@ model LocalizationTexts {
 
 model Music {
   music_id     Int       @id @default(autoincrement())
-  internal_id  Int    
+  internal_id  Int
   music_title  String?
   music_volume String?
   status      Boolean
@@ -52,7 +53,7 @@ model Music {
 
 model Sounds {
   sound_id            Int       @id @default(autoincrement())
-  internal_id         Int   
+  internal_id         Int
   sound_name          String?
   sound_internal_name String?
   status      Boolean

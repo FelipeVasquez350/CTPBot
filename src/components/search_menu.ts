@@ -1,4 +1,4 @@
-import { Entity } from '.prisma/client';
+import { Entity } from '../generated/prisma/client';
 import { ActionRowBuilder, APISelectMenuOption, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder,  } from 'discord.js';
 
 function isEntity(value: Entity[] | APISelectMenuOption[]): value is Entity[] {
