@@ -26,6 +26,9 @@ model Images {
   width       Int?
   height      Int?
   InternalName InternalNames? @relation(fields: [internal_id], references: [internal_id])
+
+  @@index([internal_id])
+  @@index([filename])
 }
 
 model LocalizationTexts {
@@ -38,6 +41,7 @@ model LocalizationTexts {
   user               String?
   InternalName       InternalNames? @relation(fields: [internal_id], references: [internal_id])
   @@id([localization_id, localization_type])
+  @@index([internal_id])
 }
 
 model Music {
@@ -49,6 +53,8 @@ model Music {
   last_edit    DateTime?
   user         String?
   InternalName InternalNames? @relation(fields: [internal_id], references: [internal_id])
+
+  @@index([internal_id])
 }
 
 model Sounds {
@@ -60,6 +66,9 @@ model Sounds {
   last_edit           DateTime?
   user                String?
   InternalName        InternalNames? @relation(fields: [internal_id], references: [internal_id])
+
+  @@index([internal_id])
+  @@index([sound_name])
 }
 
 model InternalNames {
