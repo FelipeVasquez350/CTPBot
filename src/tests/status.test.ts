@@ -2,7 +2,7 @@ import { execute } from "../commands/status";
 import dotenv from 'dotenv';
 dotenv.config();
 
-test("Help command", async () => {
+test("Status command", async () => {
   const interaction = {
     client: {
       ws: {
@@ -23,24 +23,30 @@ test("Help command", async () => {
           {
             inline: true,
             name: "Commands",
-            value: "info\nhelp\nsearch\nstatus\nfetchupdate\nrandom\nstats"
+            value: "help\ninfo\nrandom\nsearch\nstats\nstatus"
           },
           {
             inline: true,
-            name: 'Status', 
-            value: "✅\n✅\n✅\n✅\n✅\n✅\n✅"
+            name: 'Status',
+            //depends on what is registered on the guild
+            value: expect.any(String)
           },
           {
             inline: false,
-            name: 'Icons', 
-            value: "✅ Command exists and is registered\n☑️ Command exists but isn't registered\n❌ Command is registered but it's not available\n\nIf you see this lil thing ☣️, a command got erased or corrupted"
+            name: 'Icons',
+            value: "✅ Command exists and is registered\n☑️ Command exists but isn't registered\n❌ Command is registered but isn't available\n\nIf you see this lil thing ☣️, a command got erased or corrupted,\ntherefore please send help."
           },
           {
-            inline: false,
-            name: 'Ping', 
+            inline: true,
+            name: 'Ping',
             value: "0 ms"
+          },
+          {
+            inline: true,
+            name: 'Uptime',
+            value: expect.any(String)
           }
-        ] 
+        ]
       }
     ]
   });

@@ -4,63 +4,77 @@ dotenv.config();
 
 test("Info command", async () => {
   const interaction = {
+    deferred: false,
+    replied: false,
     options: {
       data: [
         {
           value: "Doctor Bones"
         }
-      ]
+      ],
+      get(option: string) {
+        return option == "name" ? { value: "Doctor Bones" } : undefined;
+      }
     },
     isCommand() { return true; },
-    reply: jest.fn()
+    isButton() { return false; },
+    isAnySelectMenu() { return false; },
+    deferReply: jest.fn(async () => { interaction.deferred = true; }),
+    editReply: jest.fn(),
+    followUp: jest.fn()
   };
-    //@ts-ignore // I'm not going to mock the whole interaction object. fuck that
+  //@ts-ignore // I'm not going to mock the whole interaction object. fuck that
   await execute(interaction);
-  expect(interaction.reply).toHaveBeenCalledWith({
-    components:  [
+  expect(interaction.editReply).toHaveBeenCalledWith({
+    content: "Name: Doctor Bones\nInternalName: DoctorBones\n```╔══════════╤════════╤════════╗\n║ Filename │  Path  │ Status ║\n╟──────────┼────────┼────────╢\n║ NPC_52   │ Images │ false  ║\n║ Gore_3   │ Images │ true   ║\n║ Gore_4   │ Images │ true   ║\n║ Gore_5   │ Images │ true   ║\n╚══════════╧════════╧════════╝\n\n```",
+    components: [
       {
-        components:  [
+        type: 1,
+        components: [
           {
-            custom_id: "Info_DownloadCTP_Doctor-Bones",
-            emoji: undefined,
+            type: 2,
             label: "Download CTP",
             style: 3,
-            type: 2,
+            custom_id: "Info_DownloadCTP_Doctor-Bones"
           },
           {
-            custom_id: "Info_DownloadVanilla_Doctor-Bones",
-            emoji: undefined,
+            type: 2,
             label: "Download Vanilla",
             style: 2,
-            type: 2,
-          },
-        ],
-        type: 1,
-      },
-    ],
-    embeds:  [
-      {
-        color: 2336090,
-        fields:  [
-          {
-            inline: true,
-            name: "Name",
-            value: "Doctor Bones"
-          },
-          {
-            inline: true,
-            name: "InternalName",
-            value: "DoctorBones"
-          },
-          {
-            inline: false,
-            name: "Data",
-            value: "```╔══════════╤════════╤════════╗\n║ Filename │  Path  │ Status ║\n╟──────────┼────────┼────────╢\n║ NPC_52   │ Images │ false  ║\n║ Gore_3   │ Images │ false  ║\n║ Gore_4   │ Images │ false  ║\n║ Gore_5   │ Images │ false  ║\n╚══════════╧════════╧════════╝\n```",
+            custom_id: "Info_DownloadVanilla_Doctor-Bones"
           }
-        ],
-        title: "Doctor Bones",
+        ]
       },
-    ],   
+      {
+        type: 1,
+        components: [
+          {
+            type: 3,
+            custom_id: "Info_Select",
+            placeholder: "Select up to 3 images to show.",
+            min_values: 0,
+            max_values: 3,
+            options: [
+              {
+                label: "Gore_3",
+                value: "Gore_3, Images",
+                description: "Gore | Images | 26x30"
+              },
+              {
+                label: "Gore_4",
+                value: "Gore_4, Images",
+                description: "Gore | Images | 22x14"
+              },
+              {
+                label: "Gore_5",
+                value: "Gore_5, Images",
+                description: "Gore | Images | 22x20"
+              }
+            ]
+          }
+        ]
+      }
+    ]
   });
 });
 test("Type option parses several tables", () => {
