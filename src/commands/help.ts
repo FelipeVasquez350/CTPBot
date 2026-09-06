@@ -15,5 +15,5 @@ export async function execute(interaction: CommandInteraction) {
     { name: 'GitHub', value: "https://github.com/FelipeVasquez350/CTPBot", inline: true }
   ]);
 
-  interaction.reply({embeds: [embed]});
+  await interaction.reply({embeds: [embed]});
 }

@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, EmbedBuilder, ButtonInteraction } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ButtonInteraction, ActionRow, MessageActionRowComponent } from "discord.js";
 import prisma from '../prisma';
 import RandButtons from "../components/random_buttons";
 
@@ -17,13 +17,17 @@ export const data = new SlashCommandBuilder()
       .setRequired(true)
   );
 
-export async function execute(interaction: CommandInteraction | ButtonInteraction) {
+export async function execute(interaction: ChatInputCommandInteraction | ButtonInteraction) {
   var input: string;
 
-  if(interaction.isCommand()) 
+  if(interaction.isCommand()) {
+    await interaction.deferReply();
     input = interaction.options.data[0].value?.toString()!;
-  else
-    input = interaction.message.components[0].components[0].customId!.split('_')[2];
+  }
+  else {
+    await interaction.deferUpdate();
+    input = (interaction.message.components[0] as ActionRow<MessageActionRowComponent>).components[0].customId!.split('_')[2];
+  }
 
   const embed = new EmbedBuilder()
     .setColor('#23a55a');
@@ -85,8 +89,5 @@ export async function execute(interaction: CommandInteraction | ButtonInteractio
     embed.setTitle(`${entity[rand].name}`)
   }
   
-  if(interaction.isCommand())
-    interaction.reply({ embeds: [embed], components: [RandButtons(input)] });  
-  else
-    interaction.update({ embeds: [embed], components: [RandButtons(input)] });
+  await interaction.editReply({ embeds: [embed], components: [RandButtons(input)] });
 } 

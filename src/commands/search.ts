@@ -1,15 +1,16 @@
-import { SlashCommandBuilder, CommandInteraction, ButtonInteraction, EmbedBuilder } from "discord.js";
+import { SlashCommandBuilder, ChatInputCommandInteraction, ButtonInteraction, EmbedBuilder, ActionRow, MessageActionRowComponent, MessageFlags, AutocompleteInteraction } from "discord.js";
 import { SearchMenu } from "../components";
 import prisma from '../prisma';
 import SearchButtons from "../components/search_buttons";
 import { execute as info } from "./info"
+import fuzzysort from "fuzzysort";
 
 export const data = new SlashCommandBuilder()
   .setName('search')
-  .setDescription('Search for entities inside the bot\'s database through files')
+  .setDescription('Search for entities inside the bot\'s database through their files and localizations')
   .addStringOption(option =>
     option.setName('type')
-      .setDescription('The type of file')
+      .setDescription('The type of entry')
       .addChoices(
         { name: 'Images', value: 'Images' },
         { name: 'Sounds', value: 'Sounds' },
@@ -18,27 +19,52 @@ export const data = new SlashCommandBuilder()
       )
       .setRequired(true))
   .addStringOption(option =>
-    option.setName('input')
-      .setDescription('The file name')
+    option.setName('id')
+      .setDescription('The file name, or the id for a localization')
       .setRequired(true)
+      .setAutocomplete(true)
   );
-  
-export async function execute(interaction: CommandInteraction | ButtonInteraction, page: number = 0) {
+
+const COLUMNS: { [key: string]: string } = {
+  Images: 'filename',
+  Sounds: 'sound_name',
+  Music: 'music_title',
+  LocalizationTexts: 'localization_id',
+};
+
+async function identifiers(type: string): Promise<string[]> {
+  switch (type) {
+    case 'Images':
+      return (await prisma.images.findMany({ select: { filename: true }, distinct: ['filename'], orderBy: { filename: 'asc' } }))
+        .map(row => row.filename!);
+    case 'Sounds':
+      return (await prisma.sounds.findMany({ select: { sound_name: true }, distinct: ['sound_name'], orderBy: { sound_name: 'asc' } }))
+        .map(row => row.sound_name!);
+    case 'Music':
+      return (await prisma.music.findMany({ select: { music_title: true }, distinct: ['music_title'], orderBy: { music_title: 'asc' } }))
+        .map(row => row.music_title!);
+    case 'LocalizationTexts':
+      return (await prisma.localizationTexts.findMany({ select: { localization_id: true }, distinct: ['localization_id'], orderBy: { localization_id: 'asc' } }))
+        .map(row => row.localization_id!);
+  }
+  return [];
+}
+
+export async function execute(interaction: ChatInputCommandInteraction | ButtonInteraction, page: number = 0) {
   var input: string;
   var type: string;
   if (interaction.isButton()) {
-    [, , , input, type] = interaction.message.components[1].components[0].customId!.split('_');
+    await interaction.deferUpdate();
+    const parts = (interaction.message.components[1] as ActionRow<MessageActionRowComponent>).components[0].customId!.split('_');
+    type = parts[3];
+    input = parts.slice(4).join('_');
   } else {
-   input = `${interaction.options.data[1].value}`;
-   type = `${interaction.options.data[0].value}`;
+   await interaction.deferReply();
+   input = `${interaction.options.get('id')?.value}`;
+   type = `${interaction.options.get('type')?.value}`;
   }
-  const column = {
-    Images: 'filename',
-    Sounds: 'sound_name',
-    Music: 'music_title',
-    LocalizationTexts: 'localization_type',
-  }[type];
- 
+  const column = COLUMNS[type];
+
   const entity = await prisma.internalNames.findMany({
     where: { 
       [type]: {
@@ -64,15 +90,32 @@ export async function execute(interaction: CommandInteraction | ButtonInteractio
     .toJSON();
   
   if(entity.length == 1) {
-    info(interaction, null, entity[0].name)
+    await info(interaction, null, entity[0].name)
     return;
   }
-  else if(entity.length != 0) { 
-    if(interaction.isCommand())
-      interaction.reply({ embeds: [embed], components: [SearchMenu(entity.slice(0,25)), SearchButtons(page == 0, entity.length < 25, page, input, type)]});            
-    else 
-      interaction.update({ embeds: [embed], components: [SearchMenu(entity.slice(0,25)), SearchButtons(page == 0, entity.length < 25, page, input, type)]});
-    }
+  else if(entity.length != 0)
+    await interaction.editReply({ embeds: [embed], components: [SearchMenu(entity.slice(0,25)), SearchButtons(page == 0, entity.length < 25, page, type, input)]});
+  else if(interaction.isCommand())
+    await interaction.editReply({ content: 'No entity found' });
   else
-    interaction.reply({ content: 'No entity found', ephemeral: true });
-}  
+    await interaction.followUp({ content: 'No entity found', flags: MessageFlags.Ephemeral });
+}
+
+export async function autocomplete(interaction: AutocompleteInteraction) {
+  const type = `${interaction.options.get('type')?.value ?? ''}`;
+
+  if (COLUMNS[type] == undefined) {
+    await interaction.respond([]);
+    return;
+  }
+
+  const focusedValue = interaction.options.getFocused();
+  const ids = await identifiers(type);
+  const choices = focusedValue == ""
+    ? ids
+    : fuzzysort.go(focusedValue, ids).map(({ target }) => target);
+
+  await interaction.respond(
+    choices.slice(0, 25).map(choice => ({ name: choice, value: choice })),
+  );
+}

@@ -79,7 +79,8 @@ async function getTotalImagesVanilla(vanillaPath: string): Promise<number> {
 }
 
 export async function execute(interaction: CommandInteraction) {
-  
+  await interaction.deferReply();
+
   const stats = await scanFolder("archive/Content/Images/");
   const totalVanilla = await getTotalImagesVanilla(`${config.VANILLA_FILES_PATH}/Images/`);
    
@@ -127,7 +128,7 @@ export async function execute(interaction: CommandInteraction) {
     .addFields(fields)
     .toJSON();
   
-  await interaction.reply({embeds: [embed]})
+  await interaction.editReply({embeds: [embed]})
   if (stats.misspellings > 0) 
     await interaction.followUp({files: [{attachment: 'archive/misspellings.txt', name: 'misspellings.txt'}]});
 

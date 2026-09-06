@@ -11,12 +11,13 @@ test("Help command", async () => {
       ]
     },
     isCommand() { return true; },
-    reply: jest.fn()
+    deferReply: jest.fn(),
+    editReply: jest.fn()
   };
 
   //@ts-ignore // I'm not going to mock the whole interaction object. fuck that
   await execute(interaction);
-  expect(interaction.reply).toHaveBeenCalledWith({
+  expect(interaction.editReply).toHaveBeenCalledWith({
     components: [
       {
         components: [

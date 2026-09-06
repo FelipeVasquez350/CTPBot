@@ -2,8 +2,8 @@ import { ButtonInteraction, ChannelType } from "discord.js";
 import { random, info } from "../commands";
 import { FetchMessageRef } from "../utils/fetch_message_reference";
 
-export function ReRoll(interaction: ButtonInteraction) {
-  random.execute(interaction);
+export async function ReRoll(interaction: ButtonInteraction) {
+  await random.execute(interaction);
 }
 
 export async function ShowInfo(interaction: ButtonInteraction) {
@@ -14,7 +14,7 @@ export async function ShowInfo(interaction: ButtonInteraction) {
   
   if(messageHasReference != "") {
     var message = await channel.messages.fetch(messageHasReference);
-    info.execute(interaction, message)
+    await info.execute(interaction, message)
   }
-  else info.execute(interaction);   
+  else await info.execute(interaction);   
 }

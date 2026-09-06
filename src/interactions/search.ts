@@ -10,17 +10,17 @@ export async function Select(interaction: StringSelectMenuInteraction) {
 
   if(messageHasReference != "") {
     var message = await channel.messages.fetch(messageHasReference);
-    info.execute(interaction, message)
+    await info.execute(interaction, message)
   }
-  else info.execute(interaction);   
+  else await info.execute(interaction);   
 }
 
-export function Previous(interaction: ButtonInteraction) {
+export async function Previous(interaction: ButtonInteraction) {
   var page: number = parseInt(interaction.customId.split('_')[2])-1;
-  search.execute(interaction,page);
+  await search.execute(interaction,page);
 }
 
-export function Next(interaction: ButtonInteraction) {
+export async function Next(interaction: ButtonInteraction) {
   var page: number = parseInt(interaction.customId.split('_')[2])+1;
-  search.execute(interaction,page);
+  await search.execute(interaction,page);
 }

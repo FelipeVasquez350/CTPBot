@@ -77,5 +77,5 @@ export async function execute(interaction: CommandInteraction) {
     ])
     .toJSON();
   
-  interaction.reply({embeds: [embed]});
+  await interaction.reply({embeds: [embed]});
 }

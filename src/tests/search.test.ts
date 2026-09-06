@@ -14,15 +14,19 @@ test("Search command", async () => {
         {
           value: "Gore_3"
         }
-      ]
+      ],
+      get(option: string) {
+        return option == "type" ? { value: "Images" } : { value: "Gore_3" };
+      }
     },
     isCommand() { return true; },
     isButton() { return false; },
-    reply: jest.fn()
+    deferReply: jest.fn(),
+    editReply: jest.fn()
   };
   //@ts-ignore // I'm not going to mock the whole interaction object. fuck that
   await execute(interaction);
-  expect(interaction.reply).toHaveBeenCalledWith({
+  expect(interaction.editReply).toHaveBeenCalledWith({
     components: [
       {
         type: 1,
@@ -66,7 +70,7 @@ test("Search command", async () => {
         type: 1,
         components: [
           {
-            custom_id: "Search_Previous_0_Gore_3_Images",
+            custom_id: "Search_Previous_0_Images_Gore_3",
             disabled: true,
             emoji: undefined,
             label: "Show Previous",
@@ -74,7 +78,7 @@ test("Search command", async () => {
             type: 2,
           },
           {
-            custom_id: "Search_Next_0_Gore_3_Images",
+            custom_id: "Search_Next_0_Images_Gore_3",
             disabled: true,
             emoji: undefined,
             label: "Show Next",
