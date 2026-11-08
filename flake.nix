@@ -15,6 +15,7 @@
         packages = with pkgs; [
           nodejs_22
           git
+          unzip
         ];
 
         env.PRISMA_SCHEMA_ENGINE_BINARY = "${pkgs.prisma-engines_7}/bin/schema-engine";

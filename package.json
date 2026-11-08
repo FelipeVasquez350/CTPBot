@@ -7,7 +7,7 @@
     "fetch": "./fetch.sh",
     "build": "npx prisma generate && npx tsc",
     "start": "npm run fetch && node build/index.js",
-    "dev": "concurrently \"tsc --watch\" \"nodemon build/index.js\"",
+    "dev": "npm run fetch && concurrently \"tsc --watch\" \"nodemon build/index.js\"",
     "deploy": "node build/utils/deploy_commands.js",
     "withdraw": "node build/utils/withdraw_commands.js",
     "update:Windows": "git fetch && git checkout v2.0 && git add ./prisma && git commit -m \"PackDB Update to '%npm_config_var%'\" && git push origin v2.0",
